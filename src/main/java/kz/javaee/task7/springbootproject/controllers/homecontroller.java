@@ -16,25 +16,32 @@ import java.util.ArrayList;
 public class homecontroller {
     @GetMapping(value = "/")
     public String index(Model model, @RequestParam(name = "task_search_name", defaultValue = "") String name,
-                        @RequestParam(name = "deadline_from", defaultValue = "1111-02-02", required = false) Date date_from,
-                        @RequestParam(name = "deadline_to", defaultValue = "2021-02-02", required = false) Date date_to,
+                        @RequestParam(name = "deadline_from", defaultValue = "1111-02-02", required = false) String date_from,
+                        @RequestParam(name = "deadline_to", defaultValue = "2021-02-02", required = false) String date_to,
                         @RequestParam(name = "isCompleted", defaultValue = "NONE", required = false) String complete) {
         ArrayList<Tasks> tasks = DBManager.getTasks();
         ArrayList<Tasks> tasks2 = new ArrayList<>();
 
         tasks2.addAll(tasks);
 
-        if (!name.equals("") || !complete.equals("NONE")) {
+        if (!name.equals("") || !complete.equals("NONE") || !date_from.equals("1111-02-02") || !date_to.equals("2021-02-02")) {
             tasks2.clear();
             if (!complete.equals("NONE")) {
                 if (!name.equals("")) {
-                    for (Tasks task : tasks) {
-                        if (task.getName().contains(name) && task.getIsCompleted().equals(complete)) {
-                            tasks2.add(task);
+                    if (!date_from.equals("1111-02-02") && !date_to.equals("2021-02-02")) {
+                        for (Tasks task : tasks) {
+                            if (task.getName().contains(name) && task.getIsCompleted().equals(complete) && task.getDeadlineDate().compareTo(Date.valueOf(date_from)) >= 0 && task.getDeadlineDate().compareTo(Date.valueOf(date_to)) <= 0) {
+                                tasks2.add(task);
+                            }
+                        }
+                    } else {
+                        for (Tasks task : tasks) {
+                            if (task.getName().contains(name) && task.getIsCompleted().equals(complete)) {
+                                tasks2.add(task);
+                            }
                         }
                     }
-                }
-                else {
+                } else {
                     for (Tasks task : tasks) {
                         if (task.getIsCompleted().equals(complete)) {
                             tasks2.add(task);
@@ -42,9 +49,17 @@ public class homecontroller {
                     }
                 }
             } else {
-                for (Tasks task : tasks) {
-                    if (task.getName().contains(name)) {
-                        tasks2.add(task);
+                if (!date_from.equals("1111-02-02") && !date_to.equals("2021-02-02")) {
+                    for (Tasks task : tasks) {
+                        if (task.getDeadlineDate().compareTo(Date.valueOf(date_from)) >= 0 && task.getDeadlineDate().compareTo(Date.valueOf(date_to)) <= 0) {
+                            tasks2.add(task);
+                        }
+                    }
+                } else {
+                    for (Tasks task : tasks) {
+                        if (task.getName().contains(name)) {
+                            tasks2.add(task);
+                        }
                     }
                 }
             }
