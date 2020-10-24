@@ -1,0 +1,137 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" th:href="@{'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css'}"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script th:src="@{'https://code.jquery.com/jquery-3.2.1.slim.min.js'}"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script th:src="@{'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js'}"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script th:src="@{'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js'}"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" href="/">TASK MANAGER</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" style="color: #ffffff" href="/">ALL TASKS</a>
+            </li>
+            <!--            <li class="nav-item">-->
+            <!--                <a class="nav-link" href="/add">ADD STUDENT</a>-->
+            <!--            </li>-->
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <!--    <div class="row mt-5">-->
+    <!--        <div class="col-6 offset-3">-->
+    <!--            -->
+    <!--        </div>-->
+    <!--    </div>-->
+    <div class="row mt-5">
+        <form th:action="@{'/'}" method="get">
+            <div class="d-flex">
+                <div class="form-group col-sm-4">
+                    <label>NAME:</label>
+                    <input type="text" class="form-control" name="task_search_name" placeholder="Enter task name...">
+                </div>
+                <div class="form-group col-sm-3">
+                    <label>Deadline from:</label>
+                    <input type="date" class="form-control" name="deadline_from">
+                </div>
+                <div class="form-group col-sm-3">
+                    <label>Deadline to:</label>
+                    <input type="date" class="form-control"  name="deadline_to">
+                </div>
+                <div class="form-group col-sm-3">
+                    <label>Is Complete:</label>
+                    <select class="form-control" name="isCompleted">
+                        <option selected>NONE</option>
+                        <option>YES</option>
+                        <option>NO</option>
+<!--                        <option>NO</option>-->
+                    </select>
+                </div>
+                <div class="form-group col-sm-2">
+                    <button type="submit" class="form-control btn btn-primary" style="margin-top: 30px">FILTER</button>
+                </div>
+
+            </div>
+        </form>
+        <div class="col-12">
+            <button type="button" class="btn btn-primary mt-3" data-toggle="modal" id="addNew"
+                    data-target="#staticBackdrop">
+                +ADD NEW
+            </button>
+            <table class="table table-stripped mt-3">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NAME</th>
+                    <th>DEADLINE DATE</th>
+                    <th>IS COMPLETED</th>
+                    <th>DETAILS</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="task: ${tasks}">
+                    <td th:text="${task.id}"></td>
+                    <td th:text="${task.name}"></td>
+                    <td th:text="${task.deadlineDate}"></td>
+                    <td th:text="${task.getIsCompleted()}"></td>
+                    <td><a th:href="@{'/details/' + ${task.id}}" class="btn btn-info btn-sm"> DETAILS</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<form th:action="@{'/addTask'}" method="post">
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">New task</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>TASK NAME:</label>
+                        <input type="text" name="task_name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>TASK DESCRIPTION:</label>
+                        <textarea class="form-control" rows="5" name="task_description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>TASK DEADLINE:</label>
+                        <input type="date" name="task_deadline" class="form-control">
+                        <label style="font-size: 12px; color: #8c8685">year-month-date</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+</body>
+</html>
